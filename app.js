@@ -178,10 +178,29 @@
     });
 
     // 검색 입력
-    document.getElementById("search-input").addEventListener("input", (e) => {
+    const searchInput = document.getElementById("search-input");
+    const searchClearBtn = document.getElementById("search-clear-btn");
+    
+    searchInput.addEventListener("input", (e) => {
       currentSearchQuery = e.target.value.trim();
+      
+      if (currentSearchQuery.length > 0) {
+        searchClearBtn.classList.remove("hidden");
+      } else {
+        searchClearBtn.classList.add("hidden");
+      }
+      
       searchRenderLimit = 100;
       renderSearchResults();
+    });
+
+    searchClearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      currentSearchQuery = "";
+      searchClearBtn.classList.add("hidden");
+      searchRenderLimit = 100;
+      renderSearchResults();
+      searchInput.focus();
     });
 
     // 상세 조건 패널 토글

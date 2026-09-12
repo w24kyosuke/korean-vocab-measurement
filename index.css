@@ -726,14 +726,44 @@ body {
   outline-offset: -2px;
 }
 
+/* 웹킷 브라우저 기본 검색 취소 버튼(X) 숨기기 */
+.search-input::-webkit-search-decoration,
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-results-button,
+.search-input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
 .search-icon {
   position: absolute;
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--label-tertiary);
-  font-size: 14px;
   pointer-events: none;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--label-tertiary);
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear-btn:active {
+  opacity: 0.7;
+}
+
+.search-clear-btn.hidden {
+  display: none;
 }
 
 /* 필터 칩 */
