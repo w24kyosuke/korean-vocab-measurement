@@ -189,7 +189,8 @@ body {
   border: none;
   cursor: pointer;
   color: var(--system-gray);
-  font: var(--font-caption2);
+  font: var(--font-callout);
+  font-weight: 500;
   transition: color var(--transition-default);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -206,7 +207,8 @@ body {
 }
 
 .tab-bar-item .tab-label {
-  font: var(--font-caption2);
+  font: var(--font-callout);
+  font-weight: 500;
 }
 
 /* === 헤더 / 네비게이션 바 === */
@@ -701,10 +703,16 @@ body {
 }
 
 .word-list-status {
-  width: 28px;
-  font-size: 18px;
+  width: 32px;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--label-secondary);
   text-align: center;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
 }
 
 .word-list-info {

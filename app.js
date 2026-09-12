@@ -687,7 +687,7 @@
       const item = document.createElement("div");
       item.className = "word-list-item";
       item.innerHTML = `
-        <div class="word-list-status" style="font-size:12px;font-weight:bold;color:var(--label-secondary)">${statusIcon}</div>
+        <div class="word-list-status">${statusIcon}</div>
         <div class="word-list-info">
           <div class="word-list-word">${escapeHtml(w.word)}</div>
           <div class="word-list-def">${escapeHtml(w.definitions[0])}</div>
