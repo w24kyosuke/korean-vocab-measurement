@@ -219,6 +219,13 @@ body {
   color: var(--label-primary);
 }
 
+.nav-header .nav-subtitle {
+  font: var(--font-subheadline);
+  color: var(--label-secondary);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
 /* === 그룹화된 리스트 (Grouped Table) === */
 .grouped-section {
   margin-bottom: 24px;
