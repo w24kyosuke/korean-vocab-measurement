@@ -40,6 +40,11 @@
   // 현재 검색 필터
   let currentSearchFilter = "all";
   let currentSearchQuery = "";
+  let currentAdvFilters = {
+    pos: "all",
+    level: "all",
+    wtype: "all"
+  };
 
   // 퀴즈 자동 넘김 타이머
   let autoNextTimeout = null;
@@ -173,6 +178,26 @@
       currentSearchQuery = e.target.value.trim();
       searchRenderLimit = 100;
       renderSearchResults();
+    });
+
+    // 상세 조건 패널 토글
+    document.getElementById("search-adv-toggle").addEventListener("click", () => {
+      const panel = document.getElementById("search-adv-panel");
+      panel.classList.toggle("hidden");
+    });
+
+    // 상세 조건 세그먼트
+    document.querySelectorAll(".search-adv-panel .segment-control").forEach((control) => {
+      control.querySelectorAll(".segment-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          control.querySelectorAll(".segment-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const type = control.id.split("-").pop(); // pos, level, wtype
+          currentAdvFilters[type] = btn.dataset.val;
+          searchRenderLimit = 100;
+          renderSearchResults();
+        });
+      });
     });
 
     // 검색 필터 칩
@@ -673,16 +698,25 @@
       const record = records[w.word_id];
       switch (currentSearchFilter) {
         case "correct":
-          return record?.status === "correct";
+          if (record?.status !== "correct") return false;
+          break;
         case "wrong":
-          return record?.status === "wrong";
+          if (record?.status !== "wrong") return false;
+          break;
         case "unknown":
-          return record?.status === "unknown";
+          if (record?.status !== "unknown") return false;
+          break;
         case "unanswered":
-          return !record;
-        default:
-          return true;
+          if (record) return false;
+          break;
       }
+
+      // 상세 조건 필터
+      if (currentAdvFilters.pos !== "all" && w.pos !== currentAdvFilters.pos) return false;
+      if (currentAdvFilters.level !== "all" && w.level !== currentAdvFilters.level) return false;
+      if (currentAdvFilters.wtype !== "all" && w.word_type !== currentAdvFilters.wtype) return false;
+
+      return true;
     });
 
     // 결과 수 표시

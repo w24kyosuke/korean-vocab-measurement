@@ -106,10 +106,43 @@
           <p class="nav-subtitle">지금까지 풀었던 단어들의 뜻을 다시 확인하거나, 오답 기록을 개별/일괄적으로 리셋할 수 있습니다.</p>
         </div>
 
-        <div class="search-bar">
-          <div class="search-input-wrapper">
-
+        <div class="search-bar" style="display: flex; gap: 8px;">
+          <div class="search-input-wrapper" style="flex: 1;">
             <input id="search-input" class="search-input" type="search" placeholder="단어 검색…" autocomplete="off">
+          </div>
+          <button id="search-adv-toggle" class="search-adv-toggle-btn" type="button">상세 조건</button>
+        </div>
+
+        <!-- 상세 조건 패널 (처음엔 숨김) -->
+        <div id="search-adv-panel" class="search-adv-panel hidden">
+          <div class="adv-filter-group">
+            <div class="adv-filter-label">품사</div>
+            <div class="segment-control small" id="search-segment-pos">
+              <button class="segment-btn active" data-val="all" type="button">전체</button>
+              <button class="segment-btn" data-val="명사" type="button">명사</button>
+              <button class="segment-btn" data-val="동사" type="button">동사</button>
+              <button class="segment-btn" data-val="형용사" type="button">형용사</button>
+            </div>
+          </div>
+          <div class="adv-filter-group">
+            <div class="adv-filter-label">난이도</div>
+            <div class="segment-control small" id="search-segment-level">
+              <button class="segment-btn active" data-val="all" type="button">전체</button>
+              <button class="segment-btn" data-val="초급" type="button">초급</button>
+              <button class="segment-btn" data-val="중급" type="button">중급</button>
+              <button class="segment-btn" data-val="고급" type="button">고급</button>
+              <button class="segment-btn" data-val="없음" type="button">없음</button>
+            </div>
+          </div>
+          <div class="adv-filter-group">
+            <div class="adv-filter-label">어종</div>
+            <div class="segment-control small" id="search-segment-wtype">
+              <button class="segment-btn active" data-val="all" type="button">전체</button>
+              <button class="segment-btn" data-val="고유어" type="button">고유어</button>
+              <button class="segment-btn" data-val="한자어" type="button">한자어</button>
+              <button class="segment-btn" data-val="외래어" type="button">외래어</button>
+              <button class="segment-btn" data-val="혼종어" type="button">혼종어</button>
+            </div>
           </div>
         </div>
 
