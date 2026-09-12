@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>한국어 어휘력 측정</title>
+  <meta name="description" content="국립국어원 한국어기초사전 기반 어휘력 측정 퀴즈">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <div class="tab-content">
+    <!-- ========================================== -->
+    <!-- 탭 1: 퀴즈                                  -->
+    <!-- ========================================== -->
+    <div id="tab-quiz" class="tab-pane active">
+      <div class="nav-header">
+        <h1 class="title-large">퀴즈</h1>
+      </div>
+
+      <!-- 로딩 -->
+      <div id="quiz-loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">데이터를 불러오는 중…</p>
+      </div>
+
+      <!-- 퀴즈 본체 -->
+      <div id="quiz-body" class="hidden">
+        <div id="quiz-progress" class="quiz-progress"></div>
+
+        <div id="quiz-word-card" class="quiz-word-card">
+          <div id="quiz-word" class="quiz-word"></div>
+          <span id="quiz-pos" class="quiz-pos-tag"></span>
+        </div>
+
+        <div id="quiz-options" class="quiz-options"></div>
+
+        <button id="quiz-unknown-btn" class="quiz-unknown-btn" type="button">모름</button>
+
+        <button id="quiz-next-btn" class="quiz-next-btn" type="button">다음</button>
+      </div>
+
+      <!-- 완료 -->
+      <div id="quiz-complete" class="quiz-complete hidden">
+        <div class="complete-icon">완료</div>
+        <div class="complete-title">모든 문제를 풀었습니다!</div>
+        <div class="complete-subtitle">설정에서 출제 범위를 변경하거나<br>검색/리셋 탭에서 답을 리셋할 수 있습니다.</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 탭 2: 통계                                  -->
+    <!-- ========================================== -->
+    <div id="tab-stats" class="tab-pane">
+      <div class="nav-header">
+        <h1 class="title-large">통계</h1>
+      </div>
+
+      <!-- 전체 개요 -->
+      <div id="stats-overview" class="stats-overview">
+        <div class="stat-card">
+          <div class="stat-label">기출률</div>
+          <div id="stats-progress-value" class="stat-value">0%</div>
+          <div id="stats-progress-sub" class="stat-sub">0 / 0</div>
+          <div class="progress-bar-container">
+            <div id="stats-progress-bar" class="progress-bar-fill blue" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">정답률</div>
+          <div id="stats-accuracy-value" class="stat-value">0%</div>
+          <div id="stats-accuracy-sub" class="stat-sub">0 / 0</div>
+          <div class="progress-bar-container">
+            <div id="stats-accuracy-bar" class="progress-bar-fill green" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 세그먼트 컨트롤 -->
+      <div id="stats-segment" class="segment-control">
+        <button class="segment-btn active" data-segment="pos" type="button">품사</button>
+        <button class="segment-btn" data-segment="level" type="button">난이도</button>
+        <button class="segment-btn" data-segment="wordtype" type="button">어종</button>
+        <button class="segment-btn" data-segment="topic" type="button">주제</button>
+      </div>
+
+      <!-- 상세 통계 리스트 -->
+      <div class="grouped-section">
+        <div id="stats-detail-list" class="grouped-list"></div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 탭 3: 검색/리셋                              -->
+    <!-- ========================================== -->
+    <div id="tab-search" class="tab-pane">
+      <div class="nav-header">
+        <h1 class="title-large">검색</h1>
+      </div>
+
+      <div class="search-bar">
+        <div class="search-input-wrapper">
+
+          <input id="search-input" class="search-input" type="search" placeholder="단어 검색…" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- 상태 필터 칩 -->
+      <div id="search-filters" class="filter-chips">
+        <button class="filter-chip active" data-filter="all" type="button">전체</button>
+        <button class="filter-chip" data-filter="correct" type="button">정답</button>
+        <button class="filter-chip" data-filter="wrong" type="button">오답</button>
+        <button class="filter-chip" data-filter="unknown" type="button">모름</button>
+        <button class="filter-chip" data-filter="unanswered" type="button">미답</button>
+      </div>
+
+      <div id="search-result-count" class="result-count"></div>
+
+      <!-- 일괄 리셋 -->
+      <div id="search-bulk-actions" class="bulk-action-bar hidden">
+        <button id="bulk-reset-btn" class="bulk-btn destructive" type="button">필터된 결과 리셋</button>
+      </div>
+
+      <!-- 단어 리스트 -->
+      <div id="search-results" class="grouped-list"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 탭 4: 설정                                  -->
+    <!-- ========================================== -->
+    <div id="tab-settings" class="tab-pane">
+      <div class="nav-header">
+        <h1 class="title-large">설정</h1>
+      </div>
+
+      <!-- 난이도 필터 -->
+      <div class="grouped-section">
+        <div class="section-header">난이도</div>
+        <div class="grouped-list">
+          <label class="grouped-list-item">
+            <span class="item-label">초급</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="level-초급" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">중급</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="level-중급" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">고급</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="level-고급" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">없음</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="level-없음" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 품사 필터 -->
+      <div class="grouped-section">
+        <div class="section-header">품사</div>
+        <div class="grouped-list">
+          <label class="grouped-list-item">
+            <span class="item-label">명사</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="pos-명사" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">동사</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="pos-동사" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">형용사</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="pos-형용사" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 어종 필터 -->
+      <div class="grouped-section">
+        <div class="section-header">어종</div>
+        <div class="grouped-list">
+          <label class="grouped-list-item">
+            <span class="item-label">고유어</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="wtype-고유어" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">한자어</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="wtype-한자어" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">외래어</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="wtype-외래어" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="grouped-list-item">
+            <span class="item-label">혼종어</span>
+            <div class="toggle-switch">
+              <input type="checkbox" data-setting="wtype-혼종어" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 데이터 관리 -->
+      <div class="grouped-section">
+        <div class="section-header">데이터 관리</div>
+        <div class="grouped-list">
+          <div class="grouped-list-item" id="settings-export" role="button" tabindex="0">
+            <span class="item-label">데이터 내보내기</span>
+            <span class="item-chevron">›</span>
+          </div>
+          <div class="grouped-list-item" id="settings-import" role="button" tabindex="0">
+            <span class="item-label">데이터 가져오기</span>
+            <span class="item-chevron">›</span>
+          </div>
+          <div class="danger-btn" id="settings-reset-all" role="button" tabindex="0">
+            전체 리셋
+          </div>
+        </div>
+      </div>
+      <input type="file" id="import-file-input" accept=".json" class="hidden">
+    </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 탭 바                                       -->
+  <!-- ========================================== -->
+  <nav class="tab-bar" role="tablist">
+    <div class="tab-bar-inner">
+      <button class="tab-bar-item active" data-tab="quiz" role="tab" aria-selected="true" type="button">
+        <span class="tab-label">퀴즈</span>
+      </button>
+      <button class="tab-bar-item" data-tab="stats" role="tab" aria-selected="false" type="button">
+        <span class="tab-label">통계</span>
+      </button>
+      <button class="tab-bar-item" data-tab="search" role="tab" aria-selected="false" type="button">
+        <span class="tab-label">검색</span>
+      </button>
+      <button class="tab-bar-item" data-tab="settings" role="tab" aria-selected="false" type="button">
+        <span class="tab-label">설정</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 확인 다이얼로그 -->
+  <div id="dialog-overlay" class="dialog-overlay" role="alertdialog" aria-modal="true">
+    <div class="dialog-box">
+      <div class="dialog-content">
+        <div id="dialog-title" class="dialog-title"></div>
+        <div id="dialog-message" class="dialog-message"></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="dialog-cancel" class="dialog-btn" type="button">취소</button>
+        <button id="dialog-confirm" class="dialog-btn destructive" type="button">리셋</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

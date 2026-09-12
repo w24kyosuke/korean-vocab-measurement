@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Large data / cache directories
+1216884/
+data/*.gz
+
+# Node/npm (if any used later)
+node_modules/
+npm-debug.log
