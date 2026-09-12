@@ -217,7 +217,7 @@ body {
 }
 
 .nav-header .title-large {
-  font: var(--font-large-title);
+  font: var(--font-title1);
   color: var(--label-primary);
 }
 
@@ -451,8 +451,8 @@ body {
 .quiz-next-btn {
   display: none;
   width: 100%;
-  min-height: 50px;
-  margin-top: 16px;
+  min-height: 44px;
+  margin-top: 0;
   padding: 12px 16px;
   background-color: var(--system-blue);
   border: none;
@@ -770,6 +770,15 @@ body {
 
 .bulk-btn:active {
   transform: scale(0.98);
+}
+
+@media (max-height: 700px) {
+  .nav-header { padding: 4px var(--content-padding) 2px; }
+  .nav-header .nav-subtitle { margin-top: 2px; font-size: 12px; }
+  .quiz-word-card { padding: 16px 12px; margin-bottom: 12px; }
+  .quiz-options { gap: 6px; margin-bottom: 6px; }
+  .quiz-option-btn, .quiz-unknown-btn, .quiz-next-btn { min-height: 42px; padding: 8px 12px; }
+  .quiz-progress { margin-bottom: 8px; }
 }
 
 .bulk-btn.destructive {

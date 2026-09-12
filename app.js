@@ -41,6 +41,9 @@
   let currentSearchFilter = "all";
   let currentSearchQuery = "";
 
+  // 퀴즈 자동 넘김 타이머
+  let autoNextTimeout = null;
+
   // 검색 결과 가상 스크롤용
   let filteredSearchResults = [];
   let searchRenderLimit = 100;
@@ -112,14 +115,28 @@
         if (saved.levels) Object.assign(settings.levels, saved.levels);
         if (saved.pos) Object.assign(settings.pos, saved.pos);
         if (saved.wordTypes) Object.assign(settings.wordTypes, saved.wordTypes);
+        if (saved.quiz) Object.assign(settings.quiz, saved.quiz);
       }
     } catch {
       // 기본값 사용
     }
+    // 기본값 보장
+    if (!settings.quiz) settings.quiz = { autonext: false };
   }
 
   function saveSettings() {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  }
+
+  function applySettingsToUI() {
+    document.querySelectorAll("[data-setting]").forEach((input) => {
+      const key = input.dataset.setting;
+      const [category, value] = key.split("-");
+      if (category === "level") input.checked = !!settings.levels[value];
+      else if (category === "pos") input.checked = !!settings.pos[value];
+      else if (category === "wtype") input.checked = !!settings.wordTypes[value];
+      else if (category === "quiz") input.checked = !!settings.quiz[value];
+    });
   }
 
   // ============================================================
@@ -195,10 +212,13 @@
         if (category === "level") settings.levels[value] = input.checked;
         else if (category === "pos") settings.pos[value] = input.checked;
         else if (category === "wtype") settings.wordTypes[value] = input.checked;
+        else if (category === "quiz") settings.quiz[value] = input.checked;
         saveSettings();
-        // 퀴즈 갱신
-        if (!quizAnswered) startQuiz();
-        else updateQuizProgress();
+        // 퀴즈 갱신 (퀴즈 설정 변경시엔 퀴즈 갱신 불필요할 수 있지만, 일단 그대로 유지)
+        if (category !== "quiz") {
+          if (!quizAnswered) startQuiz();
+          else updateQuizProgress();
+        }
       });
     });
 
@@ -301,6 +321,11 @@
   }
 
   function generateQuiz() {
+    if (autoNextTimeout) {
+      clearTimeout(autoNextTimeout);
+      autoNextTimeout = null;
+    }
+    quizAnswered = false;
     const unanswered = getUnansweredWords();
     updateQuizProgress();
 
@@ -407,8 +432,9 @@
       optionsEl.appendChild(btn);
     });
 
+    document.getElementById("quiz-unknown-btn").style.display = "";
     document.getElementById("quiz-unknown-btn").className = "quiz-unknown-btn";
-    document.getElementById("quiz-next-btn").classList.remove("visible");
+    document.getElementById("quiz-next-btn").style.display = "none";
   }
 
   function handleOptionClick(idx) {
@@ -437,9 +463,15 @@
       }
     });
 
-    document.getElementById("quiz-unknown-btn").classList.add("disabled");
-    document.getElementById("quiz-next-btn").classList.add("visible");
+    document.getElementById("quiz-unknown-btn").style.display = "none";
+    document.getElementById("quiz-next-btn").style.display = "block";
     updateQuizProgress();
+
+    if (settings.quiz?.autonext) {
+      autoNextTimeout = setTimeout(() => {
+        if (quizAnswered) generateQuiz();
+      }, 1500);
+    }
   }
 
   function handleUnknown() {
@@ -464,9 +496,15 @@
       }
     });
 
-    document.getElementById("quiz-unknown-btn").classList.add("selected");
-    document.getElementById("quiz-next-btn").classList.add("visible");
+    document.getElementById("quiz-unknown-btn").style.display = "none";
+    document.getElementById("quiz-next-btn").style.display = "block";
     updateQuizProgress();
+
+    if (settings.quiz?.autonext) {
+      autoNextTimeout = setTimeout(() => {
+        if (quizAnswered) generateQuiz();
+      }, 1500);
+    }
   }
 
   function nextQuiz() {
