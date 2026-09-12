@@ -48,6 +48,7 @@
 
   // 퀴즈 자동 넘김 타이머
   let autoNextTimeout = null;
+  let lastQuizState = null;
 
   // 검색 결과 가상 스크롤용
   let filteredSearchResults = [];
@@ -160,6 +161,9 @@
     document
       .getElementById("quiz-next-btn")
       .addEventListener("click", nextQuiz);
+    document
+      .getElementById("quiz-undo-btn")
+      .addEventListener("click", undoLastQuiz);
 
     // 통계 세그먼트
     document.querySelectorAll("#stats-segment .segment-btn").forEach((btn) => {
@@ -223,6 +227,7 @@
             delete records[w.word_id];
           }
           saveRecords();
+          clearUndoState();
           renderSearchResults();
           updateQuizProgress();
         }
@@ -241,6 +246,7 @@
         saveSettings();
         // 퀴즈 갱신 (퀴즈 설정 변경시엔 퀴즈 갱신 불필요할 수 있지만, 일단 그대로 유지)
         if (category !== "quiz") {
+          clearUndoState();
           if (!quizAnswered) startQuiz();
           else updateQuizProgress();
         }
@@ -272,6 +278,7 @@
           () => {
             records = {};
             saveRecords();
+            clearUndoState();
             startQuiz();
             renderSearchResults();
           }
@@ -470,6 +477,13 @@
     const selected = options[idx];
     const btns = document.querySelectorAll("#quiz-options .quiz-option-btn");
 
+    lastQuizState = {
+      word_id: word.word_id,
+      quizObject: currentQuiz,
+      previousRecord: records[word.word_id] ? { ...records[word.word_id] } : undefined
+    };
+    document.getElementById("quiz-undo-btn").classList.remove("hidden");
+
     // 기록 저장
     records[word.word_id] = {
       status: selected.correct ? "correct" : "wrong",
@@ -504,6 +518,13 @@
     quizAnswered = true;
 
     const { word, options } = currentQuiz;
+
+    lastQuizState = {
+      word_id: word.word_id,
+      quizObject: currentQuiz,
+      previousRecord: records[word.word_id] ? { ...records[word.word_id] } : undefined
+    };
+    document.getElementById("quiz-undo-btn").classList.remove("hidden");
 
     // 기록 저장
     records[word.word_id] = {
@@ -805,6 +826,37 @@
       listEl.innerHTML =
         '<div class="word-list-item" style="justify-content:center"><span style="color:var(--label-secondary)">결과 없음</span></div>';
     }
+  }
+
+  function clearUndoState() {
+    lastQuizState = null;
+    const btn = document.getElementById("quiz-undo-btn");
+    if (btn) btn.classList.add("hidden");
+  }
+
+  function undoLastQuiz() {
+    if (!lastQuizState) return;
+    
+    const { word_id, quizObject, previousRecord } = lastQuizState;
+    
+    if (previousRecord !== undefined) {
+      records[word_id] = previousRecord;
+    } else {
+      delete records[word_id];
+    }
+    saveRecords();
+    
+    if (autoNextTimeout) {
+      clearTimeout(autoNextTimeout);
+      autoNextTimeout = null;
+    }
+    
+    currentQuiz = quizObject;
+    quizAnswered = false;
+    
+    clearUndoState();
+    renderQuiz();
+    updateQuizProgress();
   }
 
   // ============================================================

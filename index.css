@@ -331,11 +331,36 @@ body {
 }
 
 /* === 퀴즈 화면 === */
+.quiz-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 8px 0 16px;
+}
+
 .quiz-progress {
-  text-align: center;
   font: var(--font-subheadline);
   color: var(--label-secondary);
-  padding: 8px 0 16px;
+}
+
+.quiz-undo-btn {
+  position: absolute;
+  right: 0;
+  background: none;
+  border: none;
+  font: var(--font-caption1);
+  font-weight: 500;
+  color: var(--system-blue);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: rgba(0, 122, 255, 0.1);
+  transition: opacity 0.2s;
+}
+
+.quiz-undo-btn:active {
+  opacity: 0.6;
 }
 
 .quiz-word-card {
