@@ -25,6 +25,7 @@
     levels: { 초급: true, 중급: true, 고급: true, 없음: true },
     pos: { 명사: true, 동사: true, 형용사: true },
     wordTypes: { 고유어: true, 한자어: true, 외래어: true, 혼종어: true },
+    quiz: { autonext: false },
   };
 
   // word_id → word 객체 매핑
@@ -361,12 +362,29 @@
       pane.classList.toggle("active", pane.id === `tab-${tabName}`);
     });
 
+    // BUG-03: 설정 탭 전환 시 서브뷰를 메인으로 리셋
+    if (tabName === "settings") {
+      resetSettingsNavigation();
+    }
+
     // 탭별 갱신
     if (tabName === "stats") {
       renderStats();
     } else if (tabName === "search") {
       renderSearchResults();
     }
+  }
+
+  function resetSettingsNavigation() {
+    const mainView = document.getElementById("settings-main-view");
+    if (!mainView) return;
+    // 서브뷰 닫기
+    document.querySelectorAll("#tab-settings .nav-view.sub-view").forEach((v) => {
+      v.classList.remove("active");
+    });
+    // 메인뷰 복구
+    mainView.classList.remove("slide-left");
+    mainView.classList.add("active");
   }
 
   // ============================================================
@@ -438,7 +456,7 @@
 
   function getDistractorDefinitions(targetWord, count) {
     const distractors = [];
-    const usedWords = new Set([targetWord.word]);
+    const usedWordIds = new Set([targetWord.word_id]);
     const usedDefs = new Set(targetWord.definitions);
 
     // 1차: similarity_map에서 유사어의 뜻풀이 가져오기
@@ -448,7 +466,7 @@
 
       // simWord와 같은 텍스트를 가진 사전 내 단어 찾기
       const candidates = allWords.filter(
-        (w) => w.word === simWord && !usedWords.has(w.word_id)
+        (w) => w.word === simWord && !usedWordIds.has(w.word_id)
       );
       for (const cand of candidates) {
         if (distractors.length >= count) break;
@@ -456,7 +474,7 @@
           if (!usedDefs.has(def) && def.length > 2) {
             distractors.push(def);
             usedDefs.add(def);
-            usedWords.add(cand.word_id);
+            usedWordIds.add(cand.word_id);
             break;
           }
         }
@@ -468,8 +486,7 @@
       const samePosWords = allWords.filter(
         (w) =>
           w.pos === targetWord.pos &&
-          !usedWords.has(w.word_id) &&
-          w.word !== targetWord.word
+          !usedWordIds.has(w.word_id)
       );
       shuffleArray(samePosWords);
 
@@ -479,7 +496,27 @@
           if (!usedDefs.has(def) && def.length > 2) {
             distractors.push(def);
             usedDefs.add(def);
-            usedWords.add(w.word_id);
+            usedWordIds.add(w.word_id);
+            break;
+          }
+        }
+      }
+    }
+
+    // 3차 (BUG-04): 품사 제한 없이 보충 (4지선다 보장)
+    if (distractors.length < count) {
+      const anyWords = allWords.filter(
+        (w) => !usedWordIds.has(w.word_id)
+      );
+      shuffleArray(anyWords);
+
+      for (const w of anyWords) {
+        if (distractors.length >= count) break;
+        for (const def of w.definitions) {
+          if (!usedDefs.has(def) && def.length > 2) {
+            distractors.push(def);
+            usedDefs.add(def);
+            usedWordIds.add(w.word_id);
             break;
           }
         }
@@ -844,6 +881,7 @@
             () => {
               delete records[w.word_id];
               saveRecords();
+              clearUndoState(); // BUG-05: undo 상태 클리어
               renderSearchResults();
               updateQuizProgress();
             }
@@ -906,21 +944,7 @@
   // ============================================================
   // 설정
   // ============================================================
-  function applySettingsToUI() {
-    // 토글 상태 복원
-    for (const [level, checked] of Object.entries(settings.levels)) {
-      const el = document.querySelector(`[data-setting="level-${level}"]`);
-      if (el) el.checked = checked;
-    }
-    for (const [pos, checked] of Object.entries(settings.pos)) {
-      const el = document.querySelector(`[data-setting="pos-${pos}"]`);
-      if (el) el.checked = checked;
-    }
-    for (const [wtype, checked] of Object.entries(settings.wordTypes)) {
-      const el = document.querySelector(`[data-setting="wtype-${wtype}"]`);
-      if (el) el.checked = checked;
-    }
-  }
+  // BUG-08: 중복 applySettingsToUI 제거. L137의 범용 버전만 사용.
 
   function exportData() {
     const data = {
@@ -937,7 +961,8 @@
     a.href = url;
     a.download = `korean-vocab-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    // BUG-11: 다운로드 완료 전에 해제되는 것을 방지
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
   }
 
   function importData(e) {
@@ -948,23 +973,43 @@
     reader.onload = (ev) => {
       try {
         const data = JSON.parse(ev.target.result);
-        if (data.records) {
-          records = data.records;
-          saveRecords();
+
+        // BUG-02: 데이터 유효성 검증
+        if (data.records && (typeof data.records !== 'object' || Array.isArray(data.records))) {
+          alert('파일의 records 형식이 올바르지 않습니다.');
+          return;
         }
-        if (data.settings) {
-          settings = { ...settings, ...data.settings };
-          saveSettings();
-          applySettingsToUI();
-        }
-        startQuiz();
-        alert("데이터를 성공적으로 가져왔습니다.");
+
+        // BUG-01: 확인 다이얼로그 표시
+        const recordCount = data.records ? Object.keys(data.records).length : 0;
+        showDialog(
+          '데이터 가져오기',
+          `${recordCount}개의 학습 기록을 가져옵니다. 기존 데이터가 덮어씌워집니다. 계속하시겠습니까?`,
+          () => {
+            if (data.records) {
+              records = data.records;
+              saveRecords();
+            }
+            if (data.settings) {
+              // 안전한 병합
+              if (data.settings.levels) Object.assign(settings.levels, data.settings.levels);
+              if (data.settings.pos) Object.assign(settings.pos, data.settings.pos);
+              if (data.settings.wordTypes) Object.assign(settings.wordTypes, data.settings.wordTypes);
+              if (data.settings.quiz) Object.assign(settings.quiz, data.settings.quiz);
+              saveSettings();
+              applySettingsToUI();
+            }
+            clearUndoState();
+            startQuiz();
+            renderSearchResults();
+          }
+        );
       } catch (err) {
-        alert("파일 형식이 올바르지 않습니다.");
+        alert('파일 형식이 올바르지 않습니다.');
       }
     };
     reader.readAsText(file);
-    e.target.value = "";
+    e.target.value = '';
   }
 
   // ============================================================

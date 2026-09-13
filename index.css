@@ -155,12 +155,21 @@ body {
   display: block;
 }
 
+/* BUG-09: 설정 탭만 flex 레이아웃, 나머지 탭은 block 유지 */
+#tab-settings {
+  padding: 0;
+}
+
 #tab-settings.active {
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 0;
   height: 100%;
+}
+
+/* BUG-10: 설정 메인뷰 내부 콘텐츠에 패딩 복원 */
+#settings-main-view .grouped-section {
+  padding: 0 var(--content-padding);
 }
 
 /* === 탭 바 (iOS 스타일) === */
@@ -1097,23 +1106,20 @@ body {
   background-color: var(--bg-primary);
 }
 
+/* BUG-07: .nav-view 중복 정의 통합 */
 .nav-view {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
   background-color: var(--bg-primary);
   display: flex;
   flex-direction: column;
-}
-
-/* 기본 상태 (보이지 않음, 우측) */
-.nav-view {
   transform: translateX(100%);
   opacity: 0;
   pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
 }
 
 /* 활성 상태 */
