@@ -304,6 +304,31 @@
         );
       });
 
+    // 설정 네비게이션
+    document.querySelectorAll(".nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        const targetId = link.dataset.target;
+        const targetView = document.getElementById(targetId);
+        const mainView = document.getElementById("settings-main-view");
+        if (targetView && mainView) {
+          mainView.classList.add("slide-left");
+          targetView.classList.add("active");
+        }
+      });
+    });
+
+    document.querySelectorAll(".nav-back-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.target;
+        const currentView = btn.closest(".nav-view");
+        const mainView = document.getElementById(targetId);
+        if (currentView && mainView) {
+          currentView.classList.remove("active");
+          mainView.classList.remove("slide-left");
+        }
+      });
+    });
+
     // 다이얼로그
     document
       .getElementById("dialog-cancel")

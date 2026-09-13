@@ -139,6 +139,8 @@ body {
 /* === 탭 콘텐츠 === */
 .tab-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-bottom: calc(var(--tab-bar-height) + var(--safe-area-bottom) + 16px);
@@ -151,6 +153,14 @@ body {
 
 .tab-pane.active {
   display: block;
+}
+
+#tab-settings.active {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 0;
+  height: 100%;
 }
 
 /* === 탭 바 (iOS 스타일) === */
@@ -1076,4 +1086,122 @@ body {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* === 네비게이션 스택 (설정 화면용) === */
+.nav-stack-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+}
+
+.nav-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 기본 상태 (보이지 않음, 우측) */
+.nav-view {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 활성 상태 */
+.nav-view.active {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+/* 왼쪽으로 밀려난 상태 (서브 뷰 오픈 시 메인 뷰) */
+.nav-view.slide-left {
+  transform: translateX(-30%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* 네비게이션 바 */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  padding: 0 16px;
+  background-color: var(--bg-grouped);
+  border-bottom: 0.5px solid var(--separator);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+}
+
+.nav-back-btn {
+  background: none;
+  border: none;
+  color: var(--system-blue);
+  font: var(--font-body);
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.nav-back-btn:active {
+  opacity: 0.7;
+}
+
+.nav-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font: var(--font-headline);
+  font-weight: 600;
+  color: var(--label-primary);
+}
+
+/* 스크롤 가능한 컨텐츠 영역 */
+.nav-content.scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+/* 아이템 셰브론 */
+.item-chevron {
+  color: var(--label-tertiary);
+  font-size: 20px;
+  font-weight: 400;
+  padding-left: 8px;
+}
+
+/* 앱 정보 뷰 */
+.about-section {
+  padding: 24px var(--content-padding);
+}
+.about-title {
+  font: var(--font-title2);
+  margin-bottom: 12px;
+  color: var(--label-primary);
+}
+.about-subtitle {
+  font: var(--font-headline);
+  margin: 24px 0 8px;
+  color: var(--label-primary);
+}
+.about-text {
+  font: var(--font-body);
+  color: var(--label-secondary);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.about-text strong {
+  color: var(--label-primary);
 }

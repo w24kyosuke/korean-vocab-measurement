@@ -182,141 +182,202 @@
       <!-- 탭 4: 설정                                  -->
       <!-- ========================================== -->
       <div id="tab-settings" class="tab-pane">
-        <div class="nav-header">
-          <h1 class="title-large">설정</h1>
-          <p class="nav-subtitle">내 수준에 맞게 퀴즈 출제 범위를 조절하고, 학습 기록을 안전하게 백업 및 복원하세요.</p>
-        </div>
-
-        <!-- 퀴즈 옵션 -->
-        <div class="grouped-section">
-          <div class="section-header">퀴즈 옵션</div>
-          <div class="grouped-list">
-            <label class="grouped-list-item">
-              <span class="item-label">정답 확인 후 자동 넘김 (1.5초)</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="quiz-autonext">
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- 난이도 필터 -->
-        <div class="grouped-section">
-          <div class="section-header">난이도</div>
-          <div class="grouped-list">
-            <label class="grouped-list-item">
-              <span class="item-label">초급</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="level-초급" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">중급</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="level-중급" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">고급</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="level-고급" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">없음</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="level-없음" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- 품사 필터 -->
-        <div class="grouped-section">
-          <div class="section-header">품사</div>
-          <div class="grouped-list">
-            <label class="grouped-list-item">
-              <span class="item-label">명사</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="pos-명사" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">동사</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="pos-동사" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">형용사</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="pos-형용사" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- 어종 필터 -->
-        <div class="grouped-section">
-          <div class="section-header">어종</div>
-          <div class="grouped-list">
-            <label class="grouped-list-item">
-              <span class="item-label">고유어</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="wtype-고유어" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">한자어</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="wtype-한자어" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">외래어</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="wtype-외래어" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-            <label class="grouped-list-item">
-              <span class="item-label">혼종어</span>
-              <div class="toggle-switch">
-                <input type="checkbox" data-setting="wtype-혼종어" checked>
-                <span class="toggle-slider"></span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- 데이터 관리 -->
-        <div class="grouped-section">
-          <div class="section-header">데이터 관리</div>
-          <div class="grouped-list">
-            <div class="grouped-list-item" id="settings-export" role="button" tabindex="0">
-              <span class="item-label">데이터 내보내기</span>
-              <span class="item-chevron">›</span>
+        <div class="nav-stack-container">
+          
+          <!-- 메인 뷰 -->
+          <div id="settings-main-view" class="nav-view active">
+            <div class="nav-header">
+              <h1 class="title-large">설정</h1>
+              <p class="nav-subtitle">앱 정보 확인, 퀴즈 출제 범위 설정 및 데이터를 관리하세요.</p>
             </div>
-            <div class="grouped-list-item" id="settings-import" role="button" tabindex="0">
-              <span class="item-label">데이터 가져오기</span>
-              <span class="item-chevron">›</span>
-            </div>
-            <div class="danger-btn" id="settings-reset-all" role="button" tabindex="0">
-              전체 리셋
+            
+            <div class="grouped-section">
+              <div class="grouped-list">
+                <div class="grouped-list-item nav-link" data-target="settings-view-quiz" role="button" tabindex="0">
+                  <span class="item-label">퀴즈 및 출제 범위</span>
+                  <span class="item-chevron">›</span>
+                </div>
+                <div class="grouped-list-item nav-link" data-target="settings-view-data" role="button" tabindex="0">
+                  <span class="item-label">데이터 관리</span>
+                  <span class="item-chevron">›</span>
+                </div>
+                <div class="grouped-list-item nav-link" data-target="settings-view-about" role="button" tabindex="0">
+                  <span class="item-label">앱 정보</span>
+                  <span class="item-chevron">›</span>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- 서브 뷰: 퀴즈 및 출제 범위 -->
+          <div id="settings-view-quiz" class="nav-view sub-view">
+            <div class="nav-bar">
+              <button class="nav-back-btn" data-target="settings-main-view" type="button">‹ 설정</button>
+              <div class="nav-title">퀴즈 및 출제 범위</div>
+            </div>
+            <div class="nav-content scrollable">
+              <!-- 퀴즈 옵션 -->
+              <div class="grouped-section">
+                <div class="section-header">퀴즈 옵션</div>
+                <div class="grouped-list">
+                  <label class="grouped-list-item">
+                    <span class="item-label">정답 확인 후 자동 넘김 (1.5초)</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="quiz-autonext">
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 난이도 필터 -->
+              <div class="grouped-section">
+                <div class="section-header">난이도</div>
+                <div class="grouped-list">
+                  <label class="grouped-list-item">
+                    <span class="item-label">초급</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="level-초급" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">중급</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="level-중급" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">고급</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="level-고급" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">없음</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="level-없음" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 품사 필터 -->
+              <div class="grouped-section">
+                <div class="section-header">품사</div>
+                <div class="grouped-list">
+                  <label class="grouped-list-item">
+                    <span class="item-label">명사</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="pos-명사" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">동사</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="pos-동사" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">형용사</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="pos-형용사" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 어종 필터 -->
+              <div class="grouped-section">
+                <div class="section-header">어종</div>
+                <div class="grouped-list">
+                  <label class="grouped-list-item">
+                    <span class="item-label">고유어</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="wtype-고유어" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">한자어</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="wtype-한자어" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">외래어</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="wtype-외래어" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                  <label class="grouped-list-item">
+                    <span class="item-label">혼종어</span>
+                    <div class="toggle-switch">
+                      <input type="checkbox" data-setting="wtype-혼종어" checked>
+                      <span class="toggle-slider"></span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 서브 뷰: 데이터 관리 -->
+          <div id="settings-view-data" class="nav-view sub-view">
+            <div class="nav-bar">
+              <button class="nav-back-btn" data-target="settings-main-view" type="button">‹ 설정</button>
+              <div class="nav-title">데이터 관리</div>
+            </div>
+            <div class="nav-content scrollable">
+              <div class="grouped-section" style="margin-top: 16px;">
+                <div class="grouped-list">
+                  <div class="grouped-list-item" id="settings-export" role="button" tabindex="0">
+                    <span class="item-label">데이터 내보내기</span>
+                    <span class="item-chevron">›</span>
+                  </div>
+                  <div class="grouped-list-item" id="settings-import" role="button" tabindex="0">
+                    <span class="item-label">데이터 가져오기</span>
+                    <span class="item-chevron">›</span>
+                  </div>
+                  <div class="danger-btn" id="settings-reset-all" role="button" tabindex="0">
+                    전체 리셋
+                  </div>
+                </div>
+              </div>
+              <input type="file" id="import-file-input" accept=".json" class="hidden">
+            </div>
+          </div>
+
+          <!-- 서브 뷰: 앱 정보 -->
+          <div id="settings-view-about" class="nav-view sub-view">
+            <div class="nav-bar">
+              <button class="nav-back-btn" data-target="settings-main-view" type="button">‹ 설정</button>
+              <div class="nav-title">앱 정보</div>
+            </div>
+            <div class="nav-content scrollable">
+              <div class="about-section">
+                <h2 class="about-title">한국어 어휘력 측정 퀴즈</h2>
+                <p class="about-text">본 애플리케이션은 사용자의 한국어 어휘 수준을 측정하고 학습을 돕기 위해 개발되었습니다.</p>
+                
+                <h3 class="about-subtitle">사전 출처</h3>
+                <p class="about-text">국립국어원의 <strong>한국어기초사전</strong> 데이터를 바탕으로, 일상생활 및 학습에 필수적인 약 5만 개의 표제어(명사, 동사, 형용사)를 선별하여 사용합니다.</p>
+                
+                <h3 class="about-subtitle">퀴즈 알고리즘</h3>
+                <p class="about-text">단순히 무작위 오답을 제시하는 것을 넘어, 난이도를 높이고 학습 효과를 극대화하기 위해 <strong>FastText 단어 임베딩(Vector) 알고리즘</strong>을 활용합니다.</p>
+                <p class="about-text">정답 단어와 '의미적으로 가장 유사하고 헷갈리기 쉬운' 단어들의 뜻풀이를 오답 선택지로 자동 구성하여, 미묘한 어휘의 차이를 구분하는 능력을 길러줍니다.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <input type="file" id="import-file-input" accept=".json" class="hidden">
       </div>
     </div>
 
